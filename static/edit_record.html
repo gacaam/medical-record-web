@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Record</title>
+    <!-- Include Bootstrap CSS from CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Update Record</h1>
+        <form id="update-form">
+            <input type="hidden" id="patient_id" name="patient_id"> 
+            <div class="form-group">
+                <label for="patient_name">Patient Name</label>
+                <input type="text" class="form-control" id="patient_name" name="patient_name">
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <input type="text" class="form-control" id="gender" name="gender">
+            </div>
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+            </div>
+            <div class="form-group">
+                <label for="diagnosis">Diagnosis</label>
+                <input type="text" class="form-control" id="diagnosis" name="diagnosis">
+            </div>
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea class="form-control" id="notes" name="notes"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Record</button>
+        </form>
+    </div>
+    <!-- Include Bootstrap JS and dependencies from CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+    async function loadRecord(id) {
+        const response = await fetch(`/get-record/${id}`);
+        const record = await response.json();
+        if (record) {
+            document.getElementById('patient_id').value = id;
+            document.getElementById('patient_name').value = record.patient_name || '';
+            document.getElementById('gender').value = record.gender || '';
+            document.getElementById('date_of_birth').value = record.date_of_birth || '';
+            document.getElementById('diagnosis').value = record.diagnosis || '';
+            document.getElementById('notes').value = record.notes || '';
+        } else {
+            alert('Record not found');
+        }
+    }
+
+    document.getElementById('update-form').onsubmit = async function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const id = formData.get('patient_id');
+        console.log("Form ID:", id);
+
+        if (!id) {
+            alert('Invalid patient ID');
+            return;
+        }
+
+        const jsonObject = {};
+        formData.forEach((value, key) => jsonObject[key] = value);
+
+        const response = await fetch(`/update-record/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(jsonObject),
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+            window.location.href = '/database';
+        } else {
+            alert('Failed to update record');
+        }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    if (id) {
+        loadRecord(id);
+    }
+
+    </script>
+</body>
+</html>

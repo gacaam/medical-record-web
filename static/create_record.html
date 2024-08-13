@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Medical Record</title>
+    <!-- Include Bootstrap CSS from CDN -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Create Medical Record</h1>
+        <form id="create-form">
+            <div class="form-group">
+                <label for="patient_name">Patient Name</label>
+                <input type="text" class="form-control" id="patient_name" name="patient_name" required>
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <input type="text" class="form-control" id="gender" name="gender" required>
+            </div>
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+            </div>
+            <div class="form-group">
+                <label for="diagnosis">Diagnosis</label>
+                <input type="text" class="form-control" id="diagnosis" name="diagnosis" required>
+            </div>
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea class="form-control" id="notes" name="notes"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Record</button>
+        </form>
+    </div>
+    <!-- Include Bootstrap JS and dependencies from CDN -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('create-form').onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch(`/create-record/${Date.now()}`, {  // Adjust URL if necessary
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(formData)),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.ok) {
+                window.location.href = '/database';
+            } else {
+                alert('Failed to create record');
+            }
+        }
+    </script>
+</body>
+</html>
